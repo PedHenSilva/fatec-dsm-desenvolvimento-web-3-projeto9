@@ -1,4 +1,4 @@
-# Sistema de Reserva de Salas – Desenvolvimento Web III (Projeto 09)
+# Sistema de Reserva de Salas
 
 Aplicação web desenvolvida para o gerenciamento de reservas de salas de estudo e laboratórios de uma instituição de ensino, implementando CRUD completo, API REST com Node.js puro, interface responsiva e integração com a BrasilAPI.
 
