@@ -1,0 +1,13 @@
+{
+  "name": "sistema-reserva-salas",
+  "version": "1.0.0",
+  "description": "Sistema de gerenciamento de reservas de salas e laboratórios",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}

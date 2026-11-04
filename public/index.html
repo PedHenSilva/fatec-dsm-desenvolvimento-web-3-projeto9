@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reserva de Salas - Instituição de Ensino</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Gerenciamento de Salas e Reservas</h1>
+            <nav>
+                <button class="tab-btn active" onclick="mudarTab('salas')">Gerenciar Salas</button>
+                <button class="tab-btn" onclick="mudarTab('reservas')">Gerenciar Reservas</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- ÁREA DE MENSAGENS / ALERTAS -->
+        <div id="mensagem-alerta" class="alerta hidden"></div>
+
+        <!-- ABA DE SALAS -->
+        <section id="tab-salas" class="tab-content">
+            <div class="section-header">
+                <h2>Salas de Estudo e Laboratórios</h2>
+                <button class="btn btn-primary" onclick="abrirModalSala()">+ Nova Sala</button>
+            </div>
+            
+            <div class="table-responsive">
+                <table id="tabela-salas">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Localização</th>
+                            <th>Capacidade</th>
+                            <th>Recursos</th>
+                            <th>Situação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ABA DE RESERVAS -->
+        <section id="tab-reservas" class="tab-content hidden">
+            <div class="section-header">
+                <h2>Reservas de Ambientes</h2>
+                <button class="btn btn-primary" onclick="abrirModalReserva()">+ Nova Reserva</button>
+            </div>
+
+            <!-- Filtros de Pesquisa -->
+            <div class="filtros-container">
+                <div class="form-group">
+                    <label for="filtro-data">Filtrar por Data:</label>
+                    <input type="date" id="filtro-data" onchange="filtrarReservas()">
+                </div>
+                <div class="form-group">
+                    <label for="filtro-sala">Filtrar por Sala:</label>
+                    <select id="filtro-sala" onchange="filtrarReservas()">
+                        <option value="">Todas as salas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-status">Filtrar por Status:</label>
+                    <select id="filtro-status" onchange="filtrarReservas()">
+                        <option value="">Todos</option>
+                        <option value="Ativa">Ativa</option>
+                        <option value="Cancelada">Cancelada</option>
+                    </select>
+                </div>
+                <button class="btn btn-secondary" onclick="limparFiltros()">Limpar Filtros</button>
+            </div>
+            
+            <div class="table-responsive">
+                <table id="tabela-reservas">
+                    <thead>
+                        <tr>
+                            <th>Aluno</th>
+                            <th>E-mail</th>
+                            <th>Sala</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Participantes</th>
+                            <th>Finalidade</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL DE SALA -->
+    <div id="modal-sala" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalSala()">&times;</span>
+            <h3 id="modal-sala-titulo">Cadastrar Nova Sala</h3>
+            <form id="form-sala" onsubmit="salvarSala(event)">
+                <input type="hidden" id="sala-id">
+                <div class="form-group">
+                    <label>Nome / Identificação *</label>
+                    <input type="text" id="sala-nome" required>
+                </div>
+                <div class="form-group">
+                    <label>Localização *</label>
+                    <input type="text" id="sala-localizacao" required placeholder="Ex: Bloco A, 2º Andar">
+                </div>
+                <div class="form-group">
+                    <label>Capacidade Máxima *</label>
+                    <input type="number" id="sala-capacidade" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Recursos Disponíveis *</label>
+                    <input type="text" id="sala-recursos" required placeholder="Ex: Projetor, Ar-condicionado, Computadores">
+                </div>
+                <div class="form-group">
+                    <label>Situação *</label>
+                    <select id="sala-situacao" required>
+                        <option value="Disponível">Disponível</option>
+                        <option value="Inativa">Inativa</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Salvar Sala</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE RESERVA -->
+    <div id="modal-reserva" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalReserva()">&times;</span>
+            <h3 id="modal-reserva-titulo">Nova Reserva</h3>
+            <div id="aviso-feriado" class="alerta-feriado hidden"></div>
+            <form id="form-reserva" onsubmit="salvarReserva(event)">
+                <input type="hidden" id="reserva-id">
+                <div class="form-group">
+                    <label>Nome do Aluno Responsável *</label>
+                    <input type="text" id="reserva-aluno" required>
+                </div>
+                <div class="form-group">
+                    <label>E-mail *</label>
+                    <input type="email" id="reserva-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Sala Selecionada *</label>
+                    <select id="reserva-salaId" required>
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Data da Reserva *</label>
+                    <input type="date" id="reserva-data" required onchange="checarFeriadoBrasilAPI(this.value)">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Horário Inicial *</label>
+                        <input type="time" id="reserva-horarioInicial" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Horário Final *</label>
+                        <input type="time" id="reserva-horarioFinal" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Quantidade de Participantes *</label>
+                    <input type="number" id="reserva-participantes" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Finalidade *</label>
+                    <input type="text" id="reserva-finalidade" required placeholder="Ex: Reunião de TCC, Trabalho em grupo">
+                </div>
+                <div class="form-group" id="div-status-reserva" style="display:none;">
+                    <label>Status</label>
+                    <select id="reserva-status">
+                        <option value="Ativa">Ativa</option>
+                        <option value="Cancelada">Cancelada</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Salvar Reserva</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
